@@ -3,16 +3,16 @@
 This is the repository for our movie recommender app.
 
 # Setup
-Create your environment from the Pipfile
+Create your environment from the requirements.txt
 ````
 cd ds-bootcamp-team-yellow
-pipenv install
+pip install -r requirements.txt
 ````
 
 # How to run
-Activate the shell
+Activate the env
 ````
-pipenv shell
+source env/bin/activate
 ````
 Run the app
 ````
