@@ -7,7 +7,12 @@ import pandas as pd
 
 
 def recommend(uid=None):
-    """ToDo"""
+    """
+    This function retrieves and displays in a table
+    the recommended movies, both for the new/undetermined 
+    user and for the user specified by his/her UID.
+    """
+
     if uid is None:
         # ToDo: Get recomendations for newcomer
         recomendations = pd.DataFrame(
