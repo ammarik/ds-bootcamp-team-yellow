@@ -14,12 +14,12 @@ def recommend(uid=None):
     """
 
     if uid is None:
-        # ToDo: Get recomendations for newcomer
+        # ToDo: Obtain recomendations for newcomer using API.
         recomendations = pd.DataFrame(
             ['The Shawshank Redemption', 'The Godfather', 'Pulp Fiction', 'Forrest Gump'],
              columns =['Movie name'])
     else:
-        # ToDo: Get recomendations for the user with the given UID
+        # ToDo: Get recomendations for the user with the given UID using API.
         st.success(f'Recommended movies for user with  uid: {uid}')
         recomendations = pd.DataFrame(
             ['Shrek', 'Toy Story', 'Frozen', 'Finding Nemo'],
