@@ -10,21 +10,24 @@ def recommend(uid=None):
     """ToDo"""
     if uid is None:
         # ToDo: Get recomendations for newcomer
-        recomendations = pd.DataFrame(['A', 'B', 'C'])
+        recomendations = pd.DataFrame(
+            ['The Shawshank Redemption', 'The Godfather', 'Pulp Fiction', 'Forrest Gump'],
+             columns =['Movie name'])
     else:
         # ToDo: Get recomendations for the user with the given UID
-        recomendations = pd.DataFrame(['A', 'B', 'C'])
+        st.success(f'Recommended movies for user with  uid: {uid}')
+        recomendations = pd.DataFrame(
+            ['Shrek', 'Toy Story', 'Frozen', 'Finding Nemo'],
+             columns =['Movie name'])
     st.table(recomendations)
 
 
 
 st.title("Movie recommender")
 
-name = st.text_input("Enter Your UID")
+uid = st.text_input("Enter Your UID")
 
 if st.button('Login') :
-    uid = name.title()
-    st.success(uid)
     recommend(uid)
 
 if st.button('Proceed without logging in'):
