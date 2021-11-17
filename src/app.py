@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 
 from conn.wml_client import WMLClient
+from movie_source import MovieInfoSource
 
 
 def recommend(uid=None):
@@ -23,10 +24,15 @@ def recommend(uid=None):
             # TODO show outputs from WML not dummy outputs
             model_conn.get_predictions()
             st.success(f'Recommended movies for user with  uid: {uid}')
-            recommendations = pd.DataFrame(
-                ['The Shawshank Redemption', 'The Godfather',
-                    'Pulp Fiction', 'Forrest Gump'],
-                columns=['Movie name'])
+
+            recommendations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+            for recommendation in recommendations:
+                st.header(movie_source.get_movie_name(recommendation))
+                description, image = movie_source.get_movie_info(recommendation)
+                st.write(description)
+                st.image(image)
+
         except:  # for testing purposes
             # if not able to connect, show some default recommendations
             recommendations = pd.DataFrame(
@@ -43,6 +49,7 @@ def recommend(uid=None):
             columns=['Movie name'])
     st.table(recommendations)
 
+movie_source = MovieInfoSource()
 
 st.title("Movie recommender")
 
