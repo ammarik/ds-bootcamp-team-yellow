@@ -9,12 +9,13 @@ import streamlit as st
 import pandas as pd
 
 import conn.wml_client as wmlc
+from movie_source import MovieInfoSource
 from utils.get_logger import get_logger
 
 logger: logging.Logger = get_logger()
 
 
-def recommend(add_select_box: str) -> None:
+def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
     """
     This function retrieves and displays in a table
     the recommended movies for three user types:
@@ -34,19 +35,25 @@ def recommend(add_select_box: str) -> None:
                 model_conn.get_predictions()
                 st.success(
                     f'Welcome back! We think you might enjoy these movies, {uid}')
-                recommendations = pd.DataFrame(
-                    ['The Shawshank Redemption', 'The Godfather',
-                        'Pulp Fiction', 'Forrest Gump'],
-                    columns=['Movie name'])
-                st.table(recommendations)
+                
+                recommendations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+                for recommendation in recommendations:
+                    st.header(movie_source.get_movie_name(recommendation))
+                    description, url, image = movie_source.get_movie_info(recommendation)
+                    st.write(description)
+                    st.image(image)
             except KeyError as e:  # for testing purposes
                 # if not able to connect, show some default recommendations
                 logger.warning("WML conn failed")
                 logger.warning(e)
-                recommendations = pd.DataFrame(
-                    ['The Shawshank Redemption', 'The Godfather',
-                        'Pulp Fiction', 'Forrest Gump'],
-                    columns=['Movie name'])
+                
+                recommendations = [1, 2, 3]
+                for recommendation in recommendations:
+                    st.header(movie_source.get_movie_name(recommendation))
+                    description, url, image = movie_source.get_movie_info(recommendation)
+                    st.write(description)
+                    st.image(image)
             except:
                 logger.warning("Failed due to another reason")
 
@@ -102,4 +109,5 @@ def setup_page() -> str:
 
 if __name__ == '__main__':
     add_selectbox = setup_page()
-    recommend(add_selectbox)
+    movie_source = MovieInfoSource()
+    recommend(add_selectbox, movie_source)
