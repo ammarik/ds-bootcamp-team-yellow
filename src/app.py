@@ -29,7 +29,7 @@ def recommend(uid=None):
 
             for recommendation in recommendations:
                 st.header(movie_source.get_movie_name(recommendation))
-                description, image = movie_source.get_movie_info(recommendation)
+                description, url, image = movie_source.get_movie_info(recommendation)
                 st.write(description)
                 st.image(image)
 
