@@ -143,3 +143,8 @@ cython_debug/
 
 # VSCode
 .vscode
+
+# Config local files
+config.local.json
+.local
+config
