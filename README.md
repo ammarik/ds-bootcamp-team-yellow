@@ -16,8 +16,10 @@ source env/bin/activate
 ````
 Run the app
 ````
-streamlit run app.py
+streamlit run src/app.py
 ````
+If you are running locally, you may need to set your ENV to LOCAL in order to retrieve the config
+You also need to add a config.local.json with your API_KEY from IBM Cloud when testing locally.
 
 # Guidelines for contributing
 Make sure to create a new branch and send a pull request for your changes.
