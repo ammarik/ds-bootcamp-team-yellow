@@ -29,7 +29,7 @@ def get_api_key() -> str:
     Function for getting the API key
     """
     # Set ENV to LOCAL to read values directly from config file
-    if os.getenv("ENV").upper() == "LOCAL":
+    if os.getenv("ENV") == "LOCAL":
         local_config = get_local_config_file()
         api_key = local_config["API_KEY"]
     # Not in local ENV, get API key from secret
@@ -43,7 +43,7 @@ def get_endpoint() -> str:
     Function for getting the endpoint to connect tos
     """
     # Set ENV to LOCAL to read values directly from config file
-    if os.getenv("ENV").upper() == "LOCAL":
+    if os.getenv("ENV") == "LOCAL":
         local_config = get_local_config_file()
         endpoint = local_config["ENDPOINT"]
     # Not in local ENV, get API key from secret

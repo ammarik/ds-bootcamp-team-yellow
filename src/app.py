@@ -2,10 +2,15 @@
 Streamlit hello world page
 """
 
+import logging
+
 import streamlit as st
 import pandas as pd
 
-from conn.wml_client import WMLClient
+import conn.wml_client as wmlc
+from utils.get_logger import get_logger
+
+logger: logging.Logger = get_logger()
 
 
 def recommend(uid=None):
@@ -17,7 +22,7 @@ def recommend(uid=None):
     # logged in user --> get personalized recs using WML api
     if uid:
         try:
-            model_conn = WMLClient()
+            model_conn = wmlc.WMLClient()
             # get the predictions for the given uid
             # TODO define inputs needed for final model
             # TODO show outputs from WML not dummy outputs
@@ -27,12 +32,16 @@ def recommend(uid=None):
                 ['The Shawshank Redemption', 'The Godfather',
                     'Pulp Fiction', 'Forrest Gump'],
                 columns=['Movie name'])
-        except:  # for testing purposes
+        except KeyError as e:  # for testing purposes
             # if not able to connect, show some default recommendations
+            logger.warning("WML conn failed")
+            logger.warning(e)
             recommendations = pd.DataFrame(
                 ['The Shawshank Redemption', 'The Godfather',
                     'Pulp Fiction', 'Forrest Gump'],
                 columns=['Movie name'])
+        except:
+            logger.warning("Failed due to another reason")
     # cold start user --> show the most beloved movies
     else:
         # show hard-coded recommendations from a file for cold-start user using a file
