@@ -63,8 +63,9 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
                 logger.warning(e)
                 df_recommendations = pd.read_csv('data/movie-ratings-top10.csv', index_col=[0])
                 present_recommendations(movie_source, df_recommendations['movieid'].tolist())
-            except:
+            except Exception as e:
                 logger.warning("Failed due to another reason")
+                logger.warning(e)
                 df_recommendations = pd.read_csv('data/movie-ratings-top10.csv', index_col=[0])
                 present_recommendations(movie_source, df_recommendations['movieid'].tolist())
 
