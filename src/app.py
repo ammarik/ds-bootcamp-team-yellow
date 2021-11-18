@@ -5,6 +5,7 @@ Streamlit hello world page
 import logging
 import random
 
+
 import streamlit as st
 import pandas as pd
 
@@ -13,6 +14,7 @@ from movie_source import FailedToRetrieveMovieInformation, MovieInfoSource
 from typing import List
 from utils.get_logger import get_logger
 from utils.get_predictions import get_predictions
+from utils.get_predictions_cold_start import preprocess_input, get_prediction, load_pickle
 
 logger: logging.Logger = get_logger()
 
@@ -92,17 +94,27 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
              'Sales/Marketing', 'Scientist', 'Self Employed', 'Technician/Engineer',
              'Tradesman/Craftsman', 'Unemployed', 'Writer')
         )
-        if name and age and occupation:
+        if name and age and occupation and gender:
 
             st.success(
                 f'Welcome! here are some movies to get started with, {name}')
             st.success(f'Your user id is 885564')  # dummy user id TODO
             if st.button('Show me recommendations'):
+                
+                processed = preprocess_input(age = int(age), gender = gender, occupation = occupation)
+                
+                user_id_knn = get_prediction(processed_input = processed, knn_model= knn_model)
+                
+                #recommendations = get_predictions(int(user_id_knn), int(5))
+                
+                present_recommendations(movie_source, recommendations)
+                """
                 df_recommendations = pd.read_csv(
                     'data/movie-ratings-top10.csv', index_col=[0])
+                
                 present_recommendations(
                     movie_source, df_recommendations['movieid'].tolist())
-
+                """
     # anonymous user - show general recommendations / trending movies
     elif add_selectbox == 'No - continue browsing in anonymous mode':
         st.success(
@@ -142,4 +154,7 @@ def setup_page() -> str:
 if __name__ == '__main__':
     add_selectbox = setup_page()
     movie_source = MovieInfoSource()
+    knn_model = load_pickle("./data/knn_model.pickle")
     recommend(add_selectbox, movie_source)
+
+    
