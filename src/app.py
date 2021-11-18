@@ -12,6 +12,7 @@ import conn.wml_client as wmlc
 from movie_source import FailedToRetrieveMovieInformation, MovieInfoSource
 from typing import List
 from utils.get_logger import get_logger
+from utils.get_predictions import get_predictions
 
 logger: logging.Logger = get_logger()
 
@@ -45,29 +46,27 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
     # logged in user --> get personalized recs using WML api
     if add_selectbox == 'Yes':
         uid = st.text_input("Enter Your UID")
-        if uid:
+        name = st.text_input("Enter Your name")
+        nr_of_recs = st.text_input("How many movie recommendations do you wish to see?")
+        if uid and name and nr_of_recs:
             try:
-                model_conn = wmlc.WMLClient()
-                # get the predictions for the given uid
-                # TODO define inputs needed for final model
-                # TODO show outputs from WML not dummy outputs
-                model_conn.get_predictions()
+                # NOTE this is not used atm
+                # model_conn = wmlc.WMLClient()
+                # model_conn.get_predictions()
                 st.success(
-                    f'Welcome back! We think you might enjoy these movies, {uid}')
-                
-                # TODO replace with real recommendations
-                recommendations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                    f'Welcome back! We think you might enjoy these movies, {name}')
+                recommendations = get_predictions(int(uid), int(nr_of_recs))
                 present_recommendations(movie_source, recommendations)
-                
-            except KeyError as e:  # for testing purposes
-                # if not able to connect, show some default recommendations
+            # if failed to get recommendations, show the general top 10  
+            except KeyError as e:  
                 logger.warning("WML conn failed")
                 logger.warning(e)
-                
-                recommendations = [1, 2, 3]
-                present_recommendations(movie_source, recommendations)
+                df_recommendations = pd.read_csv('data/movie-ratings-top10.csv', index_col=[0])
+                present_recommendations(movie_source, df_recommendations['movieid'].tolist())
             except:
                 logger.warning("Failed due to another reason")
+                df_recommendations = pd.read_csv('data/movie-ratings-top10.csv', index_col=[0])
+                present_recommendations(movie_source, df_recommendations['movieid'].tolist())
 
     # cold start user --> enter details and show the most beloved movies to start with
     elif add_selectbox == 'No - sign up':
