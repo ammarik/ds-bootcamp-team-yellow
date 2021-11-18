@@ -31,19 +31,24 @@ class MovieInfoSource:
     LINK_PREFIX = 'https://www.imdb.com/title/tt'
     
     def __init__(self):
-
-        self.movies_info = []
+        """Initialize movies info dictionary from provided csv files."""
+        self.movies_info = {}
 
         with open(self.MOVIES) as movies_file, open(self.LINKS) as links_file:
             movies_file_reader = csv.reader(movies_file, delimiter=',')
             links_file_reader = csv.reader(links_file, delimiter=',')
+            # Provided csv files contains header - skip it.
+            next(movies_file_reader)
+            next(links_file_reader)
+            # Load the appropriate columns into the dictionary. 
             for movie_row, link_row in zip(movies_file_reader, links_file_reader):
-                self.movies_info.append((movie_row[1], link_row[1]))
+                # movie_row[0] = movie id, movie_row[1] = movie name, link_row[1] = movie link postfix
+                self.movies_info[int(movie_row[0])] = (movie_row[1], link_row[1])
 
     def get_movie_name(self, movie_id):
         """
         Based on the given movie ID, this method returns name 
-        of the movie
+        of the movie.
         """
         try:
             movie_name = self.movies_info[movie_id][0]
