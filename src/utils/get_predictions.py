@@ -34,6 +34,9 @@ def read_user_movie_matrix() -> pd.DataFrame:
     return user_movie_matrix
 
 
+
+
+
 def read_users_wl_filter(user_id: int) -> th.List:
     """
     Read what the users already watched from a file
@@ -50,6 +53,33 @@ def read_users_wl_filter(user_id: int) -> th.List:
     # drop the movies from the list that are not included in the small dataset
     users_wl_movies_selected = [i for i in users_wl_int if i < 3706]
     return users_wl_movies_selected
+
+def read_ranked_watchlist(user_id: int) -> th.List:
+    """
+    Read what the users already watched from a file
+    Currently: shape (162541, 2), only need users with ID 1 until 6040
+    Note: changed to smaller selection of users due to Git constraints
+    """
+    # print(user_id)
+
+    users_all_watchlist = pd.read_csv('data/USERS_WATCHLIST_RANKED_TOP5.csv')
+    # drop the users with ID not present in small dataset
+    #users_wl_selected = users_wl.loc[users_wl['userid'] < 6040]
+    # split the watchlist into a list of integer values
+    """
+    users_wl_cs = users_wl[users_wl['userid']
+                                    == user_id]['watchlist'].values[0].split(",")
+    users_wl_int = list(map(int, users_wl_cs))
+    """
+    # drop the movies from the list that are not included in the small dataset
+
+    #users_wl_cs = users_all_watchlist[users_all_watchlist['userid']== user_id][:5]
+    users_wl_cs = users_all_watchlist[users_all_watchlist['userid']
+                                == user_id]['top5movies'].values[0].split(",")
+
+    # print("this is the users wl cs : " + str(users_wl_cs))
+    users_wl_int = list(map(int, users_wl_cs))
+    return users_wl_int
 
 
 def get_predictions(user_id: int, nr_of_recommendations: int) -> th.List:
