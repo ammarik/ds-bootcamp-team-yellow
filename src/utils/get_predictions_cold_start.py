@@ -23,7 +23,13 @@ def load_pickle(file_name):
 
 def get_prediction(processed_input, knn_model):
 
-    user_id = int(knn_model.kneighbors(processed_input, return_distance=True)[1]) + 1
+    #user_id = int(knn_model.kneighbors(processed_input, return_distance=False)[0]) + 1
+
+    #int(x_1[0])+1
+
+    user_id = int(knn_model.kneighbors(processed_input, return_distance=False)[0]) + 1
+
+
 
     return user_id
 

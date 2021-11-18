@@ -12,9 +12,11 @@ import pandas as pd
 import conn.wml_client as wmlc
 from movie_source import FailedToRetrieveMovieInformation, MovieInfoSource
 from typing import List
+from utils.get_predictions import recommend_for_existing_user,read_users_wl_filter, read_ranked_watchlist
 from utils.get_logger import get_logger
-from utils.get_predictions import get_predictions
-from utils.get_predictions_cold_start import preprocess_input, get_prediction, load_pickle
+from utils.get_predictions_cold_start import load_pickle, preprocess_input, get_prediction
+
+
 
 logger: logging.Logger = get_logger()
 
@@ -38,6 +40,36 @@ def present_recommendations(movie_source: MovieInfoSource, recommendations: List
             logger.warning(e)
 
 
+def present_watchlist(movie_source: MovieInfoSource, movies_watched: List[int]) -> None:
+    """
+    """
+    try:
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            st.subheader(movie_source.get_movie_name(movies_watched[0]))
+            _, _, image = movie_source.get_movie_info(movies_watched[0])
+            st.image(image)
+        with col2:
+            st.subheader(movie_source.get_movie_name(movies_watched[1]))
+            _, _, image = movie_source.get_movie_info(movies_watched[1])
+            st.image(image)
+        with col3:
+            st.subheader(movie_source.get_movie_name(movies_watched[2]))
+            _, _, image = movie_source.get_movie_info(movies_watched[2])
+            st.image(image)
+        with col4:
+            st.subheader(movie_source.get_movie_name(movies_watched[3]))
+            _, _, image = movie_source.get_movie_info(movies_watched[3])
+            st.image(image)
+        with col5:
+            st.subheader(movie_source.get_movie_name(movies_watched[4]))
+            _, _, image = movie_source.get_movie_info(movies_watched[4])
+            st.image(image)
+
+    except FailedToRetrieveMovieInformation as e:
+        logger.warning(e)
+
+
 def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
     """
     This function retrieves and displays in a table
@@ -59,10 +91,13 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
                 # model_conn.get_predictions()
                 st.success(
                     f'Welcome back! We think you might enjoy these movies, {name}')
-                recommendations = get_predictions(int(uid), int(nr_of_recs))
+                movies_watched, recommendations = recommend_for_existing_user(int(uid), int(nr_of_recs))
                 present_recommendations(movie_source, recommendations)
-            # if failed to get recommendations, show the general top 10
-            except KeyError as e:
+                st.success(
+                    f'Based on these movies you previously liked')
+                present_watchlist(movie_source, movies_watched)
+            # if failed to get recommendations, show the general top 10  
+            except KeyError as e:  
                 logger.warning("WML conn failed")
                 logger.warning(e)
                 df_recommendations = pd.read_csv(
@@ -97,24 +132,23 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
         if name and age and occupation and gender:
 
             st.success(
-                f'Welcome! here are some movies to get started with, {name}')
-            st.success(f'Your user id is 885564')  # dummy user id TODO
+                f'Thanks for signing up! Here are some movies to get you started with, {name}')
+            
+
             if st.button('Show me recommendations'):
                 
                 processed = preprocess_input(age = int(age), gender = gender, occupation = occupation)
                 
                 user_id_knn = get_prediction(processed_input = processed, knn_model= knn_model)
-                
+                logger.info(user_id_knn)
+
+                recommendations = read_ranked_watchlist(user_id_knn)
+                #recommendations = read_users_wl_filter(int(user_id_knn))[:5]
+                #movies_watched, recommendations = recommend_for_existing_user(int(user_id_knn), int(5))
                 #recommendations = get_predictions(int(user_id_knn), int(5))
                 
                 present_recommendations(movie_source, recommendations)
-                """
-                df_recommendations = pd.read_csv(
-                    'data/movie-ratings-top10.csv', index_col=[0])
-                
-                present_recommendations(
-                    movie_source, df_recommendations['movieid'].tolist())
-                """
+   
     # anonymous user - show general recommendations / trending movies
     elif add_selectbox == 'No - continue browsing in anonymous mode':
         st.success(
@@ -154,7 +188,6 @@ def setup_page() -> str:
 if __name__ == '__main__':
     add_selectbox = setup_page()
     movie_source = MovieInfoSource()
-    knn_model = load_pickle("./data/knn_model.pickle")
+    knn_model = load_pickle("./data/knn_model_b1.pickle")
     recommend(add_selectbox, movie_source)
-
     
