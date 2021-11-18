@@ -4,7 +4,7 @@ RUN pip3 install --upgrade pip
 
 WORKDIR /app
 COPY . /app
-RUN git lfs pull -I model/predictions.pkl
+RUN git lfs pull -I model/predictions-v2.pkl
 
 RUN pip3 --no-cache-dir install -r requirements.txt
 

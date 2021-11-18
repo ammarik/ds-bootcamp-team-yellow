@@ -11,8 +11,9 @@ import pandas as pd
 import conn.wml_client as wmlc
 from movie_source import FailedToRetrieveMovieInformation, MovieInfoSource
 from typing import List
+from utils.get_predictions import recommend_for_existing_user
 from utils.get_logger import get_logger
-from utils.get_predictions import get_predictions
+
 
 logger: logging.Logger = get_logger()
 
@@ -35,6 +36,36 @@ def present_recommendations(movie_source: MovieInfoSource, recommendations: List
             logger.warning(e)
 
 
+def present_watchlist(movie_source: MovieInfoSource, movies_watched: List[int]) -> None:
+    """
+    """
+    try:
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            st.subheader(movie_source.get_movie_name(movies_watched[0]))
+            _, _, image = movie_source.get_movie_info(movies_watched[0])
+            st.image(image)
+        with col2:
+            st.subheader(movie_source.get_movie_name(movies_watched[1]))
+            _, _, image = movie_source.get_movie_info(movies_watched[1])
+            st.image(image)
+        with col3:
+            st.subheader(movie_source.get_movie_name(movies_watched[2]))
+            _, _, image = movie_source.get_movie_info(movies_watched[2])
+            st.image(image)
+        with col4:
+            st.subheader(movie_source.get_movie_name(movies_watched[3]))
+            _, _, image = movie_source.get_movie_info(movies_watched[3])
+            st.image(image)
+        with col5:
+            st.subheader(movie_source.get_movie_name(movies_watched[4]))
+            _, _, image = movie_source.get_movie_info(movies_watched[4])
+            st.image(image)
+
+    except FailedToRetrieveMovieInformation as e:
+        logger.warning(e)
+
+
 def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
     """
     This function retrieves and displays in a table
@@ -55,8 +86,11 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
                 # model_conn.get_predictions()
                 st.success(
                     f'Welcome back! We think you might enjoy these movies, {name}')
-                recommendations = get_predictions(int(uid), int(nr_of_recs))
+                movies_watched, recommendations = recommend_for_existing_user(int(uid), int(nr_of_recs))
                 present_recommendations(movie_source, recommendations)
+                st.success(
+                    f'Based on these movies you previously liked')
+                present_watchlist(movie_source, movies_watched)
             # if failed to get recommendations, show the general top 10  
             except KeyError as e:  
                 logger.warning("WML conn failed")
@@ -120,3 +154,4 @@ if __name__ == '__main__':
     add_selectbox = setup_page()
     movie_source = MovieInfoSource()
     recommend(add_selectbox, movie_source)
+    
