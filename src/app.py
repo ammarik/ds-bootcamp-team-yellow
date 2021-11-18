@@ -86,11 +86,9 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
         st.success(
             f'Not sure if you want to sign up? no problem! here are some movies people generally love')
         if st.button('Show me recommendations anyway'):
-            recommendations = pd.DataFrame(
-                ['The Shawshank Redemption', 'The Godfather',
-                    'Pulp Fiction', 'Forrest Gump'],
-                columns=['Movie name'])
-            st.table(recommendations)
+            # TODO replace with real recommendations
+            recommendations = [1, 2, 3, 4, 5]
+            present_recommendations(movie_source, recommendations)
 
     # if an error occurs
     else:
