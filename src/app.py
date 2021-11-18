@@ -10,9 +10,25 @@ import pandas as pd
 
 import conn.wml_client as wmlc
 from movie_source import MovieInfoSource
+from typing import List
 from utils.get_logger import get_logger
 
 logger: logging.Logger = get_logger()
+
+
+def present_recoommendations(movie_source: MovieInfoSource, recommendations: List[int]) -> None:
+    """
+    It will obtain more information about each movie
+    and it will present it the browser.
+    """
+    for recommendation in recommendations:
+        st.header(movie_source.get_movie_name(recommendation))
+        description, url, image = movie_source.get_movie_info(recommendation)
+
+        col1, col2 = st.columns(2)
+        col1.write(url)
+        col1.write(description)
+        col2.image(image)
 
 
 def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
@@ -37,23 +53,15 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
                     f'Welcome back! We think you might enjoy these movies, {uid}')
                 
                 recommendations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-                for recommendation in recommendations:
-                    st.header(movie_source.get_movie_name(recommendation))
-                    description, url, image = movie_source.get_movie_info(recommendation)
-                    st.write(description)
-                    st.image(image)
+                present_recoommendations(movie_source, recommendations)
+                
             except KeyError as e:  # for testing purposes
                 # if not able to connect, show some default recommendations
                 logger.warning("WML conn failed")
                 logger.warning(e)
                 
                 recommendations = [1, 2, 3]
-                for recommendation in recommendations:
-                    st.header(movie_source.get_movie_name(recommendation))
-                    description, url, image = movie_source.get_movie_info(recommendation)
-                    st.write(description)
-                    st.image(image)
+                present_recoommendations(movie_source, recommendations)
             except:
                 logger.warning("Failed due to another reason")
 
