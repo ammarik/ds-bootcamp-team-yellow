@@ -10,9 +10,9 @@ import typing as th
 import numpy as np
 import pandas as pd
 
-from .get_logger import get_logger
+# from .get_logger import get_logger
 
-logger: logging.Logger = get_logger()
+# logger: logging.Logger = get_logger()
 
 
 def read_predictions_pkl(user_id: int) -> np.ndarray:
@@ -30,8 +30,9 @@ def read_users_wl_filter(user_id: int) -> th.List:
     """
     Read what the users already watched from a file
     Currently: shape (162541, 2), only need users with ID 1 until 6040
+    Note: changed to smaller selection of users due to Git constraints
     """
-    users_wl = pd.read_csv('data/users-watchlist.csv')
+    users_wl = pd.read_csv('data/users-watchlist-selected.csv')
     # drop the users with ID not present in small dataset
     users_wl_selected = users_wl.loc[users_wl['userid'] < 6040]
     # split the watchlist into a list of integer values
@@ -64,10 +65,10 @@ def get_predictions(user_id: int, nr_of_recommendations: int) -> th.List:
         preds_for_user_all.index[watched_for_user])
     # only show the number of recommendations the users wishes to see
     top_n_preds = preds_for_user_not_watched[0].nlargest(nr_of_recommendations)
-    logger.debug(top_n_preds)
+    # logger.debug(top_n_preds)
     return top_n_preds.index.tolist()
 
 
 if __name__ == "__main__":
-    top_n_preds = get_predictions(6039, 10)
+    top_n_preds = get_predictions(522, 10)
     # read_users_wl_filter()
