@@ -132,10 +132,9 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
         if name and age and occupation and gender:
 
             st.success(
-                f'Thanks for signing up! Here are some movies to get you started with, {name}')
-            
+                f'Get started with personalized recommendations - based on similar users, here are some recommendations, {name}')
 
-            if st.button('Show me recommendations'):
+            if st.button('Yes I want personal recommendations - sign me up'):
                 
                 processed = preprocess_input(age = int(age), gender = gender, occupation = occupation)
                 

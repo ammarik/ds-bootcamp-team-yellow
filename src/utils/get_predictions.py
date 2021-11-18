@@ -60,7 +60,7 @@ def read_ranked_watchlist(user_id: int) -> th.List:
     Currently: shape (162541, 2), only need users with ID 1 until 6040
     Note: changed to smaller selection of users due to Git constraints
     """
-    print(user_id)
+    # print(user_id)
 
     users_all_watchlist = pd.read_csv('data/USERS_WATCHLIST_RANKED_TOP5.csv')
     # drop the users with ID not present in small dataset
@@ -77,7 +77,7 @@ def read_ranked_watchlist(user_id: int) -> th.List:
     users_wl_cs = users_all_watchlist[users_all_watchlist['userid']
                                 == user_id]['top5movies'].values[0].split(",")
 
-    print("this is the users wl cs : " + str(users_wl_cs))
+    # print("this is the users wl cs : " + str(users_wl_cs))
     users_wl_int = list(map(int, users_wl_cs))
     return users_wl_int
 
