@@ -86,11 +86,9 @@ def recommend(add_select_box: str, movie_source: MovieInfoSource) -> None:
         st.success(
             f'Not sure if you want to sign up? no problem! here are some movies people generally love')
         if st.button('Show me recommendations anyway'):
-            recommendations = pd.DataFrame(
-                ['The Shawshank Redemption', 'The Godfather',
-                    'Pulp Fiction', 'Forrest Gump'],
-                columns=['Movie name'])
-            st.table(recommendations)
+            df_recommendations = pd.read_csv('data/movie-ratings-top10.csv', index_col=[0])
+            present_recommendations(movie_source, df_recommendations['movieid'].tolist())
+
 
     # if an error occurs
     else:
